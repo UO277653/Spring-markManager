@@ -1,16 +1,21 @@
 package com.uniovi.sdi2122212spring.entities;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class Teacher {
-
-
-    private Long Id;
+    @Id
+    @GeneratedValue
+    private Long id;
     private String Dni;
     private String Nombre;
     private String Apellidos;
     private String Categoría;
 
     public Teacher(Long Id, String dni, String nombre, String apellidos, String categoría) {
-        this.Id = Id;
+        this.id = Id;
         Dni = dni;
         Nombre = nombre;
         Apellidos = apellidos;
@@ -46,7 +51,7 @@ public class Teacher {
     @Override
     public String toString() {
         return "Teacher{" +
-                "Id=" + Id +
+                "Id=" + id +
                 ", Dni='" + Dni + '\'' +
                 ", Nombre='" + Nombre + '\'' +
                 ", Apellidos='" + Apellidos + '\'' +
@@ -63,10 +68,10 @@ public class Teacher {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 }
