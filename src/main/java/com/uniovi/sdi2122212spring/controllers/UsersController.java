@@ -56,7 +56,18 @@ public class UsersController {
     }
     @RequestMapping(value = "/user/edit/{id}", method = RequestMethod.POST)
     public String setEdit(Model model, @PathVariable Long id, @ModelAttribute User user) {
-        usersService.addUser(user);
+        // recuperamos el usuario por el dni, findbydni, setNombre,setDNI y setApellido y ese objeto es el que se llama en el update
+        User user1 = usersService.getUserByDni(user.getDni());
+
+        user1.setDni(user.getDni());
+        user1.setName(user.getName());
+        user1.setLastName(user.getLastName());
+
+        //usersService.addUser(user);
+
+        // cambia, llama a updateuser
+        usersService.updateUser(user1);
+
         return "redirect:/user/details/" + id;
     }
 
@@ -89,5 +100,11 @@ public class UsersController {
     public String signup(Model model) {
         model.addAttribute("user", new User());
         return "signup";
+    }
+
+    @RequestMapping("/user/list/update")
+    public String updateList(Model model){
+        model.addAttribute("usersList", usersService.getUsers() );
+        return "user/list :: tableUsers";
     }
 }
