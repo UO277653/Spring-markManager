@@ -1,14 +1,16 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Notaneitor</title>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome CSS -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
-          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link crossorigin="anonymous" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" rel="stylesheet">
     <!-- JS files: jQuery first, then Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -16,9 +18,9 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <a class="navbar-brand" href="#"></a>
-    <img src="/images/student-48.png" alt="logo"/>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02"
-            aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+    <img alt="logo" src="/images/student-48.png"/>
+    <button aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+            data-target="#navbarColor02" data-toggle="collapse" type="button">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="my-navbarColor02">
@@ -27,10 +29,10 @@
                 <a class="nav-link" href="/home">Home<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item dropdown active">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false"> Gestión de notas
+                <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
+                   id="navbarDropdown" role="button"> Gestión de notas
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <div aria-labelledby="navbarDropdown" class="dropdown-menu">
                     <a class="dropdown-item" href="/mark/list">Ver Notas</a>
                     <a class="dropdown-item" href="/mark/add">Agregar Nota</a>
                     <div class="dropdown-divider"></div>
@@ -38,10 +40,10 @@
                 </div>
             </li>
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="profesorDropdown" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false"> Gestión de profesores
+                <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
+                   id="profesorDropdown" role="button"> Gestión de profesores
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <div aria-labelledby="navbarDropdown" class="dropdown-menu">
                     <a class="dropdown-item" href="/professor/list">Ver profesores</a>
                 </div>
             </li>
@@ -67,14 +69,14 @@
 <div class="container" id="main-container">
     <h2>Notas</h2>
     <p>Las notas que actualmente figuran en el sistema son las siguientes:</p>
-    <button type="button" id="updateButton" class="btn btn-default">Actualizar</button>
+    <button class="btn btn-default" id="updateButton" type="button">Actualizar</button>
     <script>
-        $( "#updateButton" ).click(function() {
+        $("#updateButton").click(function () {
             $("#tableMarks").load('/mark/list/update');
         });
     </script>
     <div class="table-responsive">
-        <table class="table table-hover" th:fragment="tableMarks" id="tableMarks">
+        <table class="table table-hover" id="tableMarks" th:fragment="tableMarks">
             <thead>
             <tr>
                 <th scope="col">id</th>
@@ -91,13 +93,42 @@
                 <td th:text="${mark.description}"> Ejercicio 1</td>
                 <td th:text="${mark.score}">10</td>
                 <td><a th:href="${'/mark/details/' + mark.id}">detalles</a></td>
-                <td><a th:href="${'/mark/edit/' + mark.id}">modificar</a></td>
-                <td><a th:href="${'/mark/delete/' + mark.id}">eliminar</a></td>
+                <td><a sec:authorize="hasRole('ROLE_PROFESSOR')" th:href="${'/mark/edit/' + mark.id}">modificar</a>
+                    <div sec:authorize="hasRole('ROLE_STUDENT')" >
+                        <div th:if="${mark.resend}">
+                            <button type="button" th:id="${'resendButton' + mark.id}"
+                                    class="btn btn-success">Reenviar</button>
+                            <script th:inline="javascript">
+                                /*<![CDATA[*/
+                                $( "#resendButton"+ "[[${mark.id}]]").click(function() {
+                                    $.get( "/mark/[[${mark.id}]]/noresend", function( data ) {
+                                        $("#tableMarks").load('/mark/list/update');
+                                    });
+                                });
+                                /*]]>*/
+                            </script>
+                        </div>
+                        <div th:unless="${mark.resend}">
+                            <button type="button" th:id="${'noresendButton' + mark.id}"
+                                    class="btn btn-info">No reenviar</button>
+                            <script th:inline="javascript">
+                                /*<![CDATA[*/
+                                $( "#noresendButton"+ "[[${mark.id}]]" ).click(function() {
+                                    $.get( "/mark/[[${mark.id}]]/resend", function( data ) {
+                                        $("#tableMarks").load('/mark/list/update');
+                                    });
+                                });
+                                /*]]>*/
+                            </script>
+                        </div>
+                    </div>
+                </td>
+                <td><a sec:authorize="hasRole('PROFESSOR')" th:href="${'/mark/delete/' + mark.id}">eliminar</a>
             </tr>
             </tbody>
         </table>
     </div>
-    <div th:if="${#lists.isEmpty(markList)}"> No marks </div>
+    <div th:if="${#lists.isEmpty(markList)}"> No marks</div>
 </div>
 
 
