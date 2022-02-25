@@ -1,5 +1,6 @@
 package com.uniovi.sdi2122212spring.controllers;
 
+import com.uniovi.sdi2122212spring.services.RolesService;
 import com.uniovi.sdi2122212spring.services.SecurityService;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,9 @@ public class UsersController {
     private UsersService usersService;
 
     @Autowired
+    private RolesService rolesService;
+
+    @Autowired
     private SecurityService securityService;
 
     @RequestMapping("/user/list")
@@ -30,6 +34,9 @@ public class UsersController {
     }
     @RequestMapping(value = "/user/add")
     public String getUser(Model model) {
+
+        model.addAttribute("rolesList", rolesService.getRoles());
+
         model.addAttribute("usersList", usersService.getUsers());
         return "user/add";
     }
@@ -78,6 +85,8 @@ public class UsersController {
         if(result.hasErrors()){
             return "signup";
         }
+
+        user.setRole(rolesService.getRoles()[0]);
 
         usersService.addUser(user);
         securityService.autoLogin(user.getDni(), user.getPasswordConfirm());
