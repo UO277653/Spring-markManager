@@ -1,5 +1,6 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
       xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -29,7 +30,8 @@
                 <a class="nav-link" href="/home">Home<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item dropdown active">
-                <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
+                <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown"
+                   href="#"
                    id="navbarDropdown" role="button"> Gestión de notas
                 </a>
                 <div aria-labelledby="navbarDropdown" class="dropdown-menu">
@@ -40,7 +42,8 @@
                 </div>
             </li>
             <li class="nav-item dropdown">
-                <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
+                <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown"
+                   href="#"
                    id="profesorDropdown" role="button"> Gestión de profesores
                 </a>
                 <div aria-labelledby="navbarDropdown" class="dropdown-menu">
@@ -68,6 +71,15 @@
 
 <div class="container" id="main-container">
     <h2>Notas</h2>
+
+    <form class="form-inline" action="/mark/list">
+        <div class="form-group">
+            <input name="searchText" type="text" class="form-control" size="50"
+                   placeholder="Buscar por descripción o nombre del alumno">
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
     <p>Las notas que actualmente figuran en el sistema son las siguientes:</p>
     <button class="btn btn-default" id="updateButton" type="button">Actualizar</button>
     <script>
@@ -94,14 +106,15 @@
                 <td th:text="${mark.score}">10</td>
                 <td><a th:href="${'/mark/details/' + mark.id}">detalles</a></td>
                 <td><a sec:authorize="hasRole('ROLE_PROFESSOR')" th:href="${'/mark/edit/' + mark.id}">modificar</a>
-                    <div sec:authorize="hasRole('ROLE_STUDENT')" >
+                    <div sec:authorize="hasRole('ROLE_STUDENT')">
                         <div th:if="${mark.resend}">
-                            <button type="button" th:id="${'resendButton' + mark.id}"
-                                    class="btn btn-success">Reenviar</button>
+                            <button class="btn btn-success" th:id="${'resendButton' + mark.id}"
+                                    type="button">Reenviar
+                            </button>
                             <script th:inline="javascript">
                                 /*<![CDATA[*/
-                                $( "#resendButton"+ "[[${mark.id}]]").click(function() {
-                                    $.get( "/mark/[[${mark.id}]]/noresend", function( data ) {
+                                $("#resendButton" + "[[${mark.id}]]").click(function () {
+                                    $.get("/mark/[[${mark.id}]]/noresend", function (data) {
                                         $("#tableMarks").load('/mark/list/update');
                                     });
                                 });
@@ -109,12 +122,13 @@
                             </script>
                         </div>
                         <div th:unless="${mark.resend}">
-                            <button type="button" th:id="${'noresendButton' + mark.id}"
-                                    class="btn btn-info">No reenviar</button>
+                            <button class="btn btn-info" th:id="${'noresendButton' + mark.id}"
+                                    type="button">No reenviar
+                            </button>
                             <script th:inline="javascript">
                                 /*<![CDATA[*/
-                                $( "#noresendButton"+ "[[${mark.id}]]" ).click(function() {
-                                    $.get( "/mark/[[${mark.id}]]/resend", function( data ) {
+                                $("#noresendButton" + "[[${mark.id}]]").click(function () {
+                                    $.get("/mark/[[${mark.id}]]/resend", function (data) {
                                         $("#tableMarks").load('/mark/list/update');
                                     });
                                 });
