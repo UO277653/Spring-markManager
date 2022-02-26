@@ -72,20 +72,27 @@
 <div class="container" id="main-container">
     <h2>Notas</h2>
 
-    <form class="form-inline" action="/mark/list">
+    <form action="/mark/list" class="form-inline">
         <div class="form-group">
-            <input name="searchText" type="text" class="form-control" size="50"
-                   placeholder="Buscar por descripción o nombre del alumno">
+            <input class="form-control" name="searchText" placeholder="Buscar por descripción o nombre del alumno" size="50"
+                   type="text">
         </div>
-        <button type="submit" class="btn btn-primary">Buscar</button>
+        <button class="btn btn-primary" type="submit">Buscar</button>
     </form>
 
     <p>Las notas que actualmente figuran en el sistema son las siguientes:</p>
-    <button class="btn btn-default" id="updateButton" type="button">Actualizar</button>
-    <script>
-        $("#updateButton").click(function () {
-            $("#tableMarks").load('/mark/list/update');
+    <button type="button" id="updateButton" class="btn btn-primary">Actualizar</button>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $( "#updateButton" ).click(function() {
+            var numberPage = [[${param.page}]];
+            var urlUpdate = '/mark/list/update';
+            if (numberPage != null ){
+                urlUpdate += "?page="+numberPage[0];
+            }
+            $("#tableMarks").load(urlUpdate);
         });
+        /*]]>*/
     </script>
     <div class="table-responsive">
         <table class="table table-hover" id="tableMarks" th:fragment="tableMarks">
@@ -113,9 +120,14 @@
                             </button>
                             <script th:inline="javascript">
                                 /*<![CDATA[*/
-                                $("#resendButton" + "[[${mark.id}]]").click(function () {
-                                    $.get("/mark/[[${mark.id}]]/noresend", function (data) {
-                                        $("#tableMarks").load('/mark/list/update');
+                                $("#resendButton"+ "[[${mark.id}]]").click(function() {
+                                    $.get( "/mark/[[${mark.id}]]/noresend", function( data ) {
+                                        var numberPage = [[${param.page}]];
+                                        var urlUpdate = '/mark/list/update';
+                                        if ( numberPage != null ){
+                                            urlUpdate += "?page="+numberPage[0];
+                                        }
+                                        $("#tableMarks").load(urlUpdate);
                                     });
                                 });
                                 /*]]>*/
@@ -127,9 +139,14 @@
                             </button>
                             <script th:inline="javascript">
                                 /*<![CDATA[*/
-                                $("#noresendButton" + "[[${mark.id}]]").click(function () {
-                                    $.get("/mark/[[${mark.id}]]/resend", function (data) {
-                                        $("#tableMarks").load('/mark/list/update');
+                                $( "#noresendButton" + "[[${mark.id}]]" ).click(function() {
+                                    $.get( "/mark/[[${mark.id}]]/resend", function( data ) {
+                                        var numberPage = [[${param.page}]];
+                                        var urlUpdate = '/mark/list/update';
+                                        if ( numberPage != null ){
+                                            urlUpdate += "?page="+numberPage[0];
+                                        }
+                                        $("#tableMarks").load(urlUpdate);
                                     });
                                 });
                                 /*]]>*/
@@ -143,8 +160,9 @@
         </table>
     </div>
     <div th:if="${#lists.isEmpty(markList)}"> No marks</div>
+    <footer th:replace="fragments/pagination"/>
 </div>
-
+<footer th:replace="fragments/footer"/>
 
 </body>
 </html>
