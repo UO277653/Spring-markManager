@@ -1,9 +1,7 @@
 package com.uniovi.sdi2122212spring.controllers;
 
-import com.uniovi.sdi2122212spring.entities.Teacher;
 import com.uniovi.sdi2122212spring.services.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
